@@ -126,24 +126,21 @@ function App() {
         event.preventDefault();
       }
 
+      const keyMap: { [key: string]: string } = {
+        "*": "x",
+        "Enter": "=",
+        "Escape": "C",
+        "Backspace": "<"
+      };
+
       if (/[0-9.]/.test(key)) {
         handleButtonClick(key);
-      } else if (key === "+") {
-        handleButtonClick("+");
-      } else if (key === "-") {
-        handleButtonClick("-");
-      } else if (key === "*") {
-        handleButtonClick("x");
-      } else if (key === "/") {
-        handleButtonClick("/");
-      } else if (key === "%") {
-        handleButtonClick("%");
-      } else if (key === "Enter" || key === "=") {
-        handleButtonClick("=");
-      } else if (key === "Escape") {
-        handleButtonClick("C");
-      } else if (key === "Backspace") {
-        handleButtonClick("<");
+      }
+      else if (keyMap[key]) {
+        handleButtonClick(keyMap[key]);
+      }
+      else if (["+", "-", "/", "%", "="].includes(key)) {
+        handleButtonClick(key);
       }
     };
 
