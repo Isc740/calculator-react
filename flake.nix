@@ -26,18 +26,6 @@
             pnpm
             direnv
           ];
-
-          shellHook = ''
-            # Direnv auto-setup
-            if [ -e .envrc ]; then
-              echo "ℹ️  direnv is managing this shell (envrc found)"
-            fi
-
-            echo "✅ NestJS + Yarn dev shell ready!"
-            echo "📦 Node: $(node --version)"
-            echo "📦 Yarn: $(yarn --version)"
-            echo "📦 Nest: $(nest --version)"
-          '';
         };
       }
     );

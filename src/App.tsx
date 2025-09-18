@@ -13,20 +13,21 @@ function App() {
     const first = parseFloat(firstValue);
     const second = parseFloat(secondValue);
 
-    switch (operation) {
-      case "+":
-        return (first + second).toString();
-      case "-":
-        return (first - second).toString();
-      case "x":
-        return (first * second).toString();
-      case "/":
-        return second !== 0 ? (first / second).toString() : "Error";
-      case "%":
-        return (first % second).toString();
-      default:
-        return secondValue;
+    const operations: { [key: string]: () => number } = {
+      "+": () => first + second,
+      "-": () => first - second,
+      "x": () => first * second,
+      "/": () => second !== 0 ? first / second : NaN,
+      "%": () => first % second
+    };
+
+    if (!operations[operation]) {
+      return "Error";
     }
+
+    const result = operations[operation]();
+
+    return isNaN(result) ? "Error" : result.toString();
   };
 
   const formatOperatorForDisplay = (op: string): string => {
@@ -43,15 +44,23 @@ function App() {
         setDisplay(value);
         setExpression(expression + value);
         setWaitingForNewValue(false);
-      } else {
-        const newDisplay = display === "0" ? value : display + value;
-        setDisplay(newDisplay);
-        setExpression(expression === "0" ? value : expression + value);
+        return;
       }
+
+      const newDisplay = display === "0" ? value : display + value;
+      setDisplay(newDisplay);
+      setExpression(expression === "0" ? value : expression + value);
       return;
     }
 
     if (["+", "-", "x", "/", "%"].includes(value)) {
+      const lastChar = expression.slice(-1);
+      const isLastCharOperator = ["+", "−", "×", "/", "%"].includes(lastChar);
+
+      if (isLastCharOperator) {
+        return;
+      }
+
       if (previousValue === null) {
         setPreviousValue(display);
         setExpression(display + formatOperatorForDisplay(value));
@@ -79,18 +88,15 @@ function App() {
         if (display.length > 1) {
           const newDisplay = display.slice(0, -1);
           setDisplay(newDisplay);
-          if (expression.length > 1) {
-            setExpression(expression.slice(0, -1));
-          } else {
-            setExpression("0");
-          }
+          setExpression(expression.length > 1 ? expression.slice(0, -1) : "0");
+          break;
+        }
+        setDisplay("0");
+
+        if (operation && previousValue) {
+          setExpression(previousValue + formatOperatorForDisplay(operation));
         } else {
-          setDisplay("0");
-          if (operation && previousValue) {
-            setExpression(previousValue + formatOperatorForDisplay(operation));
-          } else {
-            setExpression("0");
-          }
+          setExpression("0");
         }
         break;
 
